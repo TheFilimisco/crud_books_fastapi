@@ -41,8 +41,7 @@ def read_book(id_item : int) -> BookOutput:
             return item
     raise HTTPException(status_code= status.HTTP_404_NOT_FOUND,detail="Books not found")
 
-
-@app.post("/create_book")
+@app.post("/create_book", status_code=status.HTTP_201_CREATED)
 def crete_book(book: BookInput):
     new_id = len(list_books) + 1
     new_book = {"id": new_id}
@@ -50,7 +49,18 @@ def crete_book(book: BookInput):
     list_books.append(new_book)
     return new_book
 
-@app.get("/delete/{id_book}")
+@app.put("/books/{id_book}", status_code=status.HTTP_200_OK)
+def update(id_book: int, book: BookInput) -> BookOutput:
+    for item_book in list_books:
+        if item_book["id"]  == id_book:
+            return item_book.update(book)
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book don't found")
+
+@app.get("/delete/{id_book}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_book(id_book: int):
-    print(list_books)
-    list_books.remove(id_book)
+    for book in list_books:
+        if book["id"] == id_book:
+            list_books.remove(book)
+    raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Book don't found")
+
+
