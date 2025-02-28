@@ -49,18 +49,20 @@ def crete_book(book: BookInput):
     list_books.append(new_book)
     return new_book
 
-@app.put("/books/{id_book}", status_code=status.HTTP_200_OK)
-def update(id_book: int, book: BookInput) -> BookOutput:
+@app.put("/books/{id_book}")
+def update(id_book: int, book: BookInput) ->BookOutput:
     for item_book in list_books:
         if item_book["id"]  == id_book:
-            return item_book.update(book)
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book don't found")
+            item_book.update(book)
+            return item_book
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
 
-@app.get("/delete/{id_book}", status_code=status.HTTP_204_NO_CONTENT)
+@app.delete("/delete/{id_book}", status_code=status.HTTP_200_OK)
 def delete_book(id_book: int):
     for book in list_books:
         if book["id"] == id_book:
             list_books.remove(book)
-    raise HTTPException(status_code=status.HTTP_204_NO_CONTENT, detail="Book don't found")
+            return {"message": "Book deleted", "deleted_book": book}
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Book not found")
 
 
